@@ -15,8 +15,16 @@ const Navbar = async() => {
                     <li><Link href="/">Home</Link></li>
                 {session && (
                 <>
-                    <li><Link href="/product">Product</Link></li>
-                    <li><Link href="/dashboard">Dashboard</Link></li>
+                    <li>
+                        <Link href="/dashboard" className="hover:text-blue-600 transition">
+                        Pelaporan
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/dashboard/jtl/list" className="hover:text-blue-600 transition">
+                        Riwayat Laporan
+                        </Link>
+                    </li>
 
                     {session.user.role=== "admin" ? (
                     <li><Link href="/user">Users</Link></li>

@@ -7,18 +7,22 @@ const Dashboard = async () => {
   return (
     <div className="max-w-7xl mx-auto py-10 px-4">
       
-      {/* Header */}
-      <div className="mb-10">
+      {/* Welcome */}
+      <div className="max-w-7xl mx-auto py-16 px-4 text-center">
         <h1 className="text-4xl font-bold text-gray-900">
-          Dashboard
-        </h1>
-
-        <h2 className="text-xl text-gray-700 mt-2">
           Welcome back :
           <span className="font-bold ml-2">
             {session?.user?.name}
           </span>
-        </h2>
+        </h1>
+      {/* Judul Tengah */}
+      <h2 className="text-3xl font-semibold text-blue-600 mt-14">
+        Kategori Laporan
+      </h2>
+      {/* Deskripsi */}
+      <p className="text-gray-600 text-lg mt-4">
+        Pilih jenis pelaporan yang ingin anda sampaikan
+      </p>
       </div>
 
       {/* Menu Pilihan */}

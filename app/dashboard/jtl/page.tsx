@@ -1,21 +1,62 @@
+"use client";
+
+import { useState } from "react";
 import { createJTLReport } from "@/lib/action";
 import Link from "next/link";
 
 const JTLPage = () => {
+
+  // State GPS
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [loadingLocation, setLoadingLocation] = useState(false);
+
+  // Function ambil lokasi GPS
+  const getLocation = () => {
+
+    if (!navigator.geolocation) {
+      alert("Browser tidak mendukung GPS");
+      return;
+    }
+
+    setLoadingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+
+        setLatitude(position.coords.latitude.toString());
+        setLongitude(position.coords.longitude.toString());
+
+        setLoadingLocation(false);
+      },
+
+      (error) => {
+        console.log(error);
+        alert("Gagal mengambil lokasi");
+        setLoadingLocation(false);
+      }
+    );
+  };
+
   return (
     <div className="max-w-3xl mx-auto py-10 px-4">
-      
+
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-900">
           Pelaporan JTL
         </h1>
+
         <p className="text-gray-600 mt-2">
           Silakan isi form laporan JTL di bawah ini.
         </p>
       </div>
-            {/* Form */}
-            <form action={createJTLReport} className="bg-white shadow-lg rounded-2xl p-8 space-y-6 border">
+
+      {/* Form */}
+      <form
+        action={createJTLReport}
+        className="bg-white shadow-lg rounded-2xl p-8 space-y-6 border"
+      >
 
         {/* Jenis Kategori */}
         <div>
@@ -92,6 +133,67 @@ const JTLPage = () => {
           />
         </div>
 
+        {/* GPS Lokasi */}
+        <div className="space-y-4">
+
+          <div className="flex items-center justify-between">
+
+            <h2 className="text-lg font-semibold text-gray-900">
+              Lokasi GPS
+            </h2>
+
+            <button
+              type="button"
+              onClick={getLocation}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+            >
+              {loadingLocation ? "Mengambil..." : "Ambil Lokasi"}
+            </button>
+
+          </div>
+
+          {/* Latitude */}
+          <div>
+            <label
+              htmlFor="latitude"
+              className="block mb-2 text-sm font-medium text-gray-900"
+            >
+              Latitude
+            </label>
+
+            <input
+              type="text"
+              id="latitude"
+              name="latitude"
+              value={latitude}
+              onChange={(e) => setLatitude(e.target.value)}
+              placeholder="-6.200000"
+              className="w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-gray-900"
+            />
+          </div>
+
+          {/* Longitude */}
+          <div>
+            <label
+              htmlFor="longitude"
+              className="block mb-2 text-sm font-medium text-gray-900"
+            >
+              Longitude
+            </label>
+
+            <input
+              type="text"
+              id="longitude"
+              name="longitude"
+              value={longitude}
+              onChange={(e) => setLongitude(e.target.value)}
+              placeholder="106.816666"
+              className="w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-gray-900"
+            />
+          </div>
+
+        </div>
+
         {/* Tombol Submit */}
         <button
           type="submit"
@@ -99,21 +201,10 @@ const JTLPage = () => {
         >
           Kirim Laporan
         </button>
-      <div className="flex justify-center">
-  <Link
-    href="/dashboard/jtl/list"
-    className="inline-flex justify-center bg-green-600 hover:bg-green-900 text-white px-60 py-2 rounded-lg font-semibold transition"
-  >
-    Lihat Riwayat Laporan
-  </Link>
-</div>
       </form>
-      
+
     </div>
-    
+  );
+};
 
-    
-  )
-}
-
-export default JTLPage
+export default JTLPage;

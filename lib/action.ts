@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { auth } from "@/auth";
+import { revalidatePath } from "next/cache";
 
 // ================= REGISTER =================
 export const signupCredentials = async (
@@ -98,6 +99,8 @@ export const createJTLReport = async (formData: FormData) => {
   const kategori = formData.get("kategori") as string;
   const deskripsi = formData.get("deskripsi") as string;
   const tanggal = formData.get("tanggal") as string;
+  const latitude = formData.get("latitude") as string;
+  const longitude = formData.get("longitude") as string;
 
   try {
 
@@ -106,6 +109,8 @@ export const createJTLReport = async (formData: FormData) => {
         kategori,
         deskripsi,
         tanggal: new Date(tanggal),
+        latitude,
+        longitude,
         userId: session.user.id,
       }
     });
@@ -117,4 +122,46 @@ export const createJTLReport = async (formData: FormData) => {
   }
 
   redirect("/dashboard");
+};
+
+// ================= DELETE JTL REPORT =================
+export const deleteJTLReport = async (id: string) => {
+  try {
+    await prisma.jTLReport.delete({
+      where: {
+        id,
+      },
+    });
+
+    revalidatePath("/dashboard/jtl/list");
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// ================= UPDATE STATUS =================
+export const updateJTLStatus = async (
+  id: string,
+  status: string
+) => {
+
+  try {
+
+    await prisma.jTLReport.update({
+      where: {
+        id,
+      },
+      data: {
+        status,
+      },
+    });
+
+    revalidatePath("/dashboard/jtl/list");
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
 };

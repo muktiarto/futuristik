@@ -10,7 +10,7 @@ generator client {
 // prisma/schema.prisma
 datasource db {
   provider  = "postgresql"
-  url = env("DATABASE_URL")
+  url       = env("DATABASE_URL")
 }
 
 model Account {
@@ -84,6 +84,9 @@ model JTLReport {
   deskripsi   String
   foto        String?
   tanggal     DateTime
+  latitude    String?
+  longitude   String?
+  status      String @default("Menunggu")
 
   createdAt   DateTime @default(now())
 
