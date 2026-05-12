@@ -2,11 +2,13 @@ import { prisma } from "@/lib/prisma";
 import { deleteJTLReport } from "@/lib/action";
 import { updateJTLStatus } from "@/lib/action";
 import { auth } from "@/auth";
+import { JTLReport,User } from "@prisma/client";
+
 
 const session = await auth();
 const JTLListPage = async () => {
 
-const reports = await prisma.jTLReport.findMany({
+const reports: (JTLReport & { user: User })[]= await prisma.jTLReport.findMany({
 
   where:
     session?.user?.role === "admin"
@@ -24,7 +26,7 @@ const reports = await prisma.jTLReport.findMany({
   },
 
 });
-console.log(reports)
+
   return (
     <div className="max-w-6xl mx-auto py-10 px-4">
 
