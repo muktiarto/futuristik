@@ -5,8 +5,8 @@ import { auth } from "@/auth";
 import { JTLReport,User } from "@prisma/client";
 
 
-const session = await auth();
 const JTLListPage = async () => {
+const session = await auth();
 
 const reports: (JTLReport & { user: User })[]= await prisma.jTLReport.findMany({
 
