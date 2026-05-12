@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { createJTLReport } from "@/lib/action";
+import { createP2TLReport } from "@/lib/action";
+import Link from "next/link";
 
-const JTLPage = () => {
+const P2TLPage = () => {
 
   // State GPS
   const [latitude, setLatitude] = useState("");
@@ -42,42 +43,20 @@ const JTLPage = () => {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-blue-600">
-          Pelaporan JTL
+        <h1 className="text-4xl font-bold text-green-600">
+          Pelaporan P2TL
         </h1>
 
         <p className="text-gray-600 mt-2">
-          Silakan isi form laporan JTL di bawah ini.
+          Silakan isi form laporan P2TL di bawah ini.
         </p>
       </div>
 
       {/* Form */}
       <form
-        action={createJTLReport}
+        action={createP2TLReport}
         className="bg-white shadow-lg rounded-2xl p-8 space-y-6 border"
       >
-
-        {/* Jenis Kategori */}
-        <div>
-          <label
-            htmlFor="kategori"
-            className="block mb-2 text-sm font-medium text-gray-900"
-          >
-            Jenis Kategori
-          </label>
-
-          <select
-            id="kategori"
-            name="kategori"
-            className="w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">-- Pilih Kategori --</option>
-            <option value="Kabel listrik">Kabel listrik</option>
-            <option value="Tiang listrik">Tiang listrik</option>
-            <option value="kWh meter">kWh meter</option>
-            <option value="Gardu">Gardu</option>
-          </select>
-        </div>
 
         {/* Deskripsi */}
         <div>
@@ -206,4 +185,4 @@ const JTLPage = () => {
   );
 };
 
-export default JTLPage;
+export default P2TLPage;

@@ -140,11 +140,25 @@ export const deleteJTLReport = async (id: string) => {
   }
 };
 
-// ================= UPDATE STATUS =================
+// ================= UPDATE STATUS JTL=================
 export const updateJTLStatus = async (
   id: string,
   status: string
 ) => {
+
+  // cek session login
+  const session = await auth();
+
+  // jika belum login
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  // cek role user
+  // hanya ADMIN yang boleh update status
+  if (session.user.role !== "admin") {
+    throw new Error("Access denied");
+  }
 
   try {
 
@@ -158,6 +172,189 @@ export const updateJTLStatus = async (
     });
 
     revalidatePath("/dashboard/jtl/list");
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+};
+
+// ================= SUBMIT P2TL =================
+export const createP2TLReport = async (formData: FormData) => {
+
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const deskripsi = formData.get("deskripsi") as string;
+  const tanggal = formData.get("tanggal") as string;
+  const latitude = formData.get("latitude") as string;
+  const longitude = formData.get("longitude") as string;
+
+  try {
+
+    await prisma.p2TLReport.create({
+      data: {
+        deskripsi,
+        tanggal: new Date(tanggal),
+        latitude,
+        longitude,
+        userId: session.user.id,
+      }
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+
+  redirect("/dashboard");
+};
+
+// ================= DELETE P2TL REPORT =================
+export const deleteP2TLReport = async (id: string) => {
+  try {
+    await prisma.p2TLReport.delete({
+      where: {
+        id,
+      },
+    });
+
+    revalidatePath("/dashboard/p2tl/list");
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// ================= UPDATE STATUS P2TL=================
+export const updateP2TLStatus = async (
+  id: string,
+  status: string
+) => {
+
+  // cek session login
+  const session = await auth();
+
+  // jika belum login
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  // cek role user
+  // hanya ADMIN yang boleh update status
+  if (session.user.role !== "admin") {
+    throw new Error("Access denied");
+  }
+
+  try {
+
+    await prisma.p2TLReport.update({
+      where: {
+        id,
+      },
+      data: {
+        status,
+      },
+    });
+
+    revalidatePath("/dashboard/p2tl/list");
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+};
+
+// ================= SUBMIT ENERGI =================
+export const createENERGIReport = async (formData: FormData) => {
+
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const deskripsi = formData.get("deskripsi") as string;
+  const tanggal = formData.get("tanggal") as string;
+  const latitude = formData.get("latitude") as string;
+  const longitude = formData.get("longitude") as string;
+
+  try {
+
+    await prisma.energiReport.create({
+      data: {
+        deskripsi,
+        tanggal: new Date(tanggal),
+        latitude,
+        longitude,
+        userId: session.user.id,
+      }
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+
+  redirect("/dashboard");
+};
+
+
+// ================= DELETE ENERGI REPORT =================
+export const deleteENERGIReport = async (id: string) => {
+  try {
+    await prisma.energiReport.delete({
+      where: {
+        id,
+      },
+    });
+
+    revalidatePath("/dashboard/energi/list");
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// ================= UPDATE STATUS ENERGI=================
+export const updateENERGIStatus = async (
+  id: string,
+  status: string
+) => {
+
+  // cek session login
+  const session = await auth();
+
+  // jika belum login
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  // cek role user
+  // hanya ADMIN yang boleh update status
+  if (session.user.role !== "admin") {
+    throw new Error("Access denied");
+  }
+
+  try {
+
+    await prisma.energiReport.update({
+      where: {
+        id,
+      },
+      data: {
+        status,
+      },
+    });
+
+    revalidatePath("/dashboard/energi/list");
 
   } catch (error) {
 

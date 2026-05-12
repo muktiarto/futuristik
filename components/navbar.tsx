@@ -22,9 +22,25 @@ const Navbar = async() => {
                     </li>
                     <li>
                         <Link href="/dashboard/jtl/list" className="hover:text-blue-600 transition">
-                        Riwayat Laporan
+                        Laporan JTL
                         </Link>
                     </li>
+                    <li>
+                        <Link href="/dashboard/p2tl/list" className="hover:text-green-600 transition">
+                        Laporan P2TL
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/dashboard/energi/list" className="hover:text-purple-600 transition">
+                        Laporan Energi
+                        </Link>
+                    </li>
+                    <Link
+                    href="/dashboard/report"
+                    className="hover:text-blue-900"
+                    >
+                    Semua Pelaporan
+                    </Link>
 
                     {session.user.role=== "admin" ? (
                     <li><Link href="/user">Users</Link></li>

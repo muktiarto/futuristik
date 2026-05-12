@@ -1,14 +1,14 @@
 import { prisma } from "@/lib/prisma";
-import { deleteJTLReport } from "@/lib/action";
-import { updateJTLStatus } from "@/lib/action";
+import { deleteP2TLReport } from "@/lib/action";
+import { updateP2TLStatus } from "@/lib/action";
 import { auth } from "@/auth";
-import { JTLReport,User } from "@prisma/client";
+import { P2TLReport,User } from "@prisma/client";
 
 
-const JTLListPage = async () => {
+const P2TLListPage = async () => {
 const session = await auth();
 
-const reports: (JTLReport & { user: User })[]= await prisma.jTLReport.findMany({
+const reports: (P2TLReport & { user: User })[]= await prisma.p2TLReport.findMany({
 
   where:
     session?.user?.role === "admin"
@@ -30,8 +30,8 @@ const reports: (JTLReport & { user: User })[]= await prisma.jTLReport.findMany({
   return (
     <div className="max-w-6xl mx-auto py-10 px-4">
 
-      <h1 className="text-3xl font-bold mb-6 text-blue-600">
-        Data Pelaporan JTL
+      <h1 className="text-3xl font-bold mb-6 text-green-600">
+        Data Pelaporan P2TL
       </h1>
 
       <div className="grid gap-6">
@@ -45,11 +45,7 @@ const reports: (JTLReport & { user: User })[]= await prisma.jTLReport.findMany({
 
     <div className="flex items-center justify-between">
 
-<h2 className="text-xl font-bold text-blue-600">
-  {report.kategori}
-</h2>
-
-<p className="text-sm text-gray-500 mt-2">
+<p className="font-bold text-black mt-2">
   Dilaporkan oleh :
   <span className="font-semibold ml-1">
     {report.user.name}
@@ -96,7 +92,7 @@ const reports: (JTLReport & { user: User })[]= await prisma.jTLReport.findMany({
 
         const status = formData.get("status") as string;
 
-        await updateJTLStatus(report.id, status);
+        await updateP2TLStatus(report.id, status);
       }}
     >
 
@@ -166,7 +162,7 @@ const reports: (JTLReport & { user: User })[]= await prisma.jTLReport.findMany({
       <form
         action={async () => {
           "use server";
-          await deleteJTLReport(report.id);
+          await deleteP2TLReport(report.id);
         }}
       >
         <button
@@ -187,4 +183,4 @@ const reports: (JTLReport & { user: User })[]= await prisma.jTLReport.findMany({
   );
 };
 
-export default JTLListPage;
+export default P2TLListPage;

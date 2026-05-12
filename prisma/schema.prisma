@@ -9,87 +9,119 @@ generator client {
 
 // prisma/schema.prisma
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String  @map("user_id")
-  type               String
-  provider           String
-  providerAccountId  String  @map("provider_account_id")
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
- 
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@unique([provider, providerAccountId])
   @@map("accounts")
 }
- 
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique @map("session_token")
   userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@map("sessions")
 }
- 
+
 model User {
-  id            String    @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
+  email         String?        @unique
+  emailVerified DateTime?      @map("email_verified")
   image         String?
   password      String?
-  role          String @default("user")
+  role          String         @default("user")
   accounts      Account[]
   sessions      Session[]
   product       Product[]
   jtlReports    JTLReport[]
- 
+  p2tlReports   P2TLReport[]
+  energiReports EnergiReport[]
+
   @@map("users")
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@unique([identifier, token])
   @@map("verification_tokens")
 }
 
 model Product {
-  id   String @id @default(cuid())
-  name String
-  price Int
+  id        String   @id @default(cuid())
+  name      String
+  price     Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId String
-  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model JTLReport {
-  id          String   @id @default(cuid())
-  kategori    String
-  deskripsi   String
-  foto        String?
-  tanggal     DateTime
-  latitude    String?
-  longitude   String?
-  status      String @default("Menunggu")
+  id        String   @id @default(cuid())
+  kategori  String
+  deskripsi String
+  foto      String?
+  tanggal   DateTime
+  latitude  String?
+  longitude String?
+  status    String   @default("Menunggu")
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  userId      String
-  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model P2TLReport {
+  id        String   @id @default(cuid())
+  deskripsi String
+  foto      String?
+  tanggal   DateTime
+  latitude  String?
+  longitude String?
+  status    String   @default("Menunggu")
+
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EnergiReport {
+  id        String   @id @default(cuid())
+  deskripsi String
+  foto      String?
+  tanggal   DateTime
+  latitude  String?
+  longitude String?
+  status    String   @default("Menunggu")
+
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
