@@ -8,7 +8,7 @@ const ReportPage = async () => {
   // JTL
   const jtlReports = await prisma.jTLReport.findMany({
     where:
-      session?.user?.role === "admin"
+      session?.user?.role === "ADMIN"
         ? {}
         : {
             userId: session?.user?.id,
@@ -22,7 +22,7 @@ const ReportPage = async () => {
   // P2TL
   const p2tlReports = await prisma.p2TLReport.findMany({
     where:
-      session?.user?.role === "admin"
+      session?.user?.role === "ADMIN"
         ? {}
         : {
             userId: session?.user?.id,
@@ -36,7 +36,7 @@ const ReportPage = async () => {
   // ENERGI
   const energiReports = await prisma.energiReport.findMany({
     where:
-      session?.user?.role === "admin"
+      session?.user?.role === "ADMIN"
         ? {}
         : {
             userId: session?.user?.id,

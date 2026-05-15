@@ -8,22 +8,24 @@ import { JTLReport,User } from "@prisma/client";
 const JTLListPage = async () => {
 const session = await auth();
 
-const reports: (JTLReport & { user: User })[]= await prisma.jTLReport.findMany({
+const reports: (JTLReport & { user: User })[] =
+  await prisma.jTLReport.findMany({
 
-  where:
-    session?.user?.role === "admin"
-      ? {}
-      : {
-          userId: session?.user?.id,
-        },
+    where:
+      session?.user?.role === "ADMIN" ||
+      session?.user?.role === "PELAKSANA"
+        ? {}
+        : {
+            userId: session?.user?.id,
+          },
 
-  include: {
-    user: true,
-  },
+    include: {
+      user: true,
+    },
 
-  orderBy: {
-    createdAt: "desc",
-  },
+    orderBy: {
+      createdAt: "desc",
+    },
 
 });
 
@@ -87,8 +89,11 @@ const reports: (JTLReport & { user: User })[]= await prisma.jTLReport.findMany({
         )}
       </div>
      {/* UPDATE STATUS ADMIN */}
-{session?.user?.role === "admin" && (
-  <div className="mt-4">
+    {(
+      session?.user?.role === "ADMIN" ||
+      session?.user?.role === "PELAKSANA"
+    ) && (
+      <div className="mt-4">
 
     <form
       action={async (formData) => {

@@ -28,8 +28,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       
       const {email,password} = validatedFields.data;
       const user = await prisma.user.findUnique({
-        where:{email}
-      })
+      where: { email },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        password: true,
+        role: true,
+        point: true,
+        emailVerified: true,
+      }
+    })
       if(!user || !user.password){
         throw new Error("User not found");
       }
@@ -54,13 +64,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return true;
     },
-jwt({ token, user }) {
+jwt: async ({ token, user }) => {
 
+  // saat login pertama
   if (user) {
-
     token.id = user.id;
-    token.role = user.role;
+  }
 
+  // ambil data terbaru user dari database
+  const dbUser = await prisma.user.findUnique({
+    where: {
+      id: token.id as string,
+    },
+  });
+
+  if (dbUser) {
+    token.role = dbUser.role;
+    token.point = dbUser.point;
   }
 
   return token;
@@ -72,6 +92,7 @@ session({ session, token }) {
 
     session.user.id = token.id as string;
     session.user.role = token.role as string;
+    session.user.point = token.point as number;
 
   }
 

@@ -13,6 +13,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  PELAKSANA
+  PELAPOR
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("user_id")
@@ -50,13 +56,18 @@ model User {
   emailVerified DateTime?      @map("email_verified")
   image         String?
   password      String?
-  role          String         @default("user")
+  role Role @default(PELAPOR)
+  point Int @default(0)
   accounts      Account[]
   sessions      Session[]
   product       Product[]
-  jtlReports    JTLReport[]
-  p2tlReports   P2TLReport[]
-  energiReports EnergiReport[]
+  jtlReports    JTLReport[]    @relation("JTLReportUser")
+  p2tlReports   P2TLReport[]   @relation("P2TLReportUser")
+  energiReports EnergiReport[] @relation("EnergiReportUser")
+
+  validatedJTLReports     JTLReport[]    @relation("JTLReportValidator")
+  validatedP2TLReports    P2TLReport[]   @relation("P2TLReportValidator")
+  validatedEnergiReports  EnergiReport[] @relation("EnergiReportValidator")
 
   @@map("users")
 }
@@ -93,7 +104,11 @@ model JTLReport {
   createdAt DateTime @default(now())
 
   userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User @relation("JTLReportUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  validatedById String?
+  validatedBy User? @relation("JTLReportValidator", fields: [validatedById], references: [id])
+  
 }
 
 model P2TLReport {
@@ -108,7 +123,10 @@ model P2TLReport {
   createdAt DateTime @default(now())
 
   userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User @relation("P2TLReportUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  validatedById String?
+  validatedBy User? @relation("P2TLReportValidator", fields: [validatedById], references: [id])
 }
 
 model EnergiReport {
@@ -123,5 +141,8 @@ model EnergiReport {
   createdAt DateTime @default(now())
 
   userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User @relation("EnergiReportUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  validatedById String?
+  validatedBy User? @relation("EnergiReportValidator", fields: [validatedById], references: [id])
 }

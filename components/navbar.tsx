@@ -25,16 +25,21 @@ const Navbar = async() => {
                         Laporan JTL
                         </Link>
                     </li>
-                    <li>
-                        <Link href="/dashboard/p2tl/list" className="hover:text-green-600 transition">
-                        Laporan P2TL
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/dashboard/energi/list" className="hover:text-purple-600 transition">
-                        Laporan Energi
-                        </Link>
-                    </li>
+                    {session.user.role !== "PELAKSANA" && (
+                    <>
+                        <li>
+                            <Link href="/dashboard/p2tl/list">
+                                Laporan P2TL
+                            </Link>
+                        </li>
+
+                        <li>
+                            <Link href="/dashboard/energi/list">
+                                Laporan Energi
+                            </Link>
+                        </li>
+                    </>
+                    )}
                     <Link
                     href="/dashboard/report"
                     className="hover:text-blue-900"
@@ -42,7 +47,7 @@ const Navbar = async() => {
                     Semua Pelaporan
                     </Link>
 
-                    {session.user.role=== "admin" ? (
+                    {session.user.role=== "ADMIN" ? (
                     <li><Link href="/user">Users</Link></li>
                     ):null}
                 </>
@@ -53,12 +58,19 @@ const Navbar = async() => {
                 
                 <div className="flex gap-3 items-center">
                     <div className="flex flex-col justify-center -space-y-1">
+
                         <span className="font-semibold text-gray-500 text-right capitalize">
                             {session.user.name}
                         </span>
-                        <span className="font-xs text-gray-400 text-right capitalize">
+
+                        <span className="text-xs text-gray-400 text-right capitalize">
                             {session.user.role}
                         </span>
+
+                        <span className="text-xs font-semibold text-yellow-500 text-right">
+                            ⭐ {session.user.point} Point
+                        </span>
+
                     </div>
                     <button type="button" className="text-sm ring-2 bg-gray-100 rounded-full">
                         <Image src={session.user.image || "/globe.svg"} alt="avatar" width={64} height={64} className="w-8 h-8"></Image>

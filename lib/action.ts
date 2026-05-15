@@ -102,24 +102,36 @@ export const createJTLReport = async (formData: FormData) => {
   const latitude = formData.get("latitude") as string;
   const longitude = formData.get("longitude") as string;
 
-  try {
+try {
 
-    await prisma.jTLReport.create({
-      data: {
-        kategori,
-        deskripsi,
-        tanggal: new Date(tanggal),
-        latitude,
-        longitude,
-        userId: session.user.id,
-      }
-    });
+  await prisma.jTLReport.create({
+    data: {
+      kategori,
+      deskripsi,
+      tanggal: new Date(tanggal),
+      latitude,
+      longitude,
+      userId: session.user.id,
+    }
+  });
 
-  } catch (error) {
+  // tambah point pelapor +1
+  await prisma.user.update({
+    where: {
+      id: session.user.id,
+    },
+    data: {
+      point: {
+        increment: 1,
+      },
+    },
+  });
 
-    console.log(error);
+} catch (error) {
 
-  }
+  console.log(error);
+
+}
 
   redirect("/dashboard");
 };
@@ -156,28 +168,60 @@ export const updateJTLStatus = async (
 
   // cek role user
   // hanya ADMIN yang boleh update status
-  if (session.user.role !== "admin") {
-    throw new Error("Access denied");
-  }
+if (
+  session.user.role !== "ADMIN" &&
+  session.user.role !== "PELAKSANA"
+) {
+  throw new Error("Unauthorized")
+}
 
-  try {
+ try {
 
-    await prisma.jTLReport.update({
+  const report = await prisma.jTLReport.update({
+    where: {
+      id,
+    },
+    data: {
+      status,
+    },
+  });
+
+  // jika status VALID
+  if (status === "Valid") {
+
+    // point pelapor +5
+    await prisma.user.update({
       where: {
-        id,
+        id: report.userId,
       },
       data: {
-        status,
+        point: {
+          increment: 5,
+        },
       },
     });
 
-    revalidatePath("/dashboard/jtl/list");
-
-  } catch (error) {
-
-    console.log(error);
+    // point validator +5
+    await prisma.user.update({
+      where: {
+        id: session.user.id,
+      },
+      data: {
+        point: {
+          increment: 5,
+        },
+      },
+    });
 
   }
+
+  revalidatePath("/dashboard/jtl/list");
+
+} catch (error) {
+
+  console.log(error);
+
+}
 };
 
 // ================= SUBMIT P2TL =================
@@ -205,6 +249,18 @@ export const createP2TLReport = async (formData: FormData) => {
         userId: session.user.id,
       }
     });
+
+    // tambah point pelapor +1
+    await prisma.user.update({
+  where: {
+    id: session.user.id,
+  },
+  data: {
+    point: {
+      increment: 1,
+    },
+  },
+  });
 
   } catch (error) {
 
@@ -247,26 +303,58 @@ export const updateP2TLStatus = async (
 
   // cek role user
   // hanya ADMIN yang boleh update status
-  if (session.user.role !== "admin") {
-    throw new Error("Access denied");
-  }
+if (
+  session.user.role !== "ADMIN" &&
+  session.user.role !== "PELAKSANA"
+) {
+  throw new Error("Unauthorized")
+}
 
   try {
 
-    await prisma.p2TLReport.update({
+   const report = await prisma.p2TLReport.update({
+    where: {
+      id,
+    },
+    data: {
+      status,
+    },
+  });
+
+  // jika status VALID
+  if (status === "Valid") {
+
+    // point pelapor +5
+    await prisma.user.update({
       where: {
-        id,
+        id: report.userId,
       },
       data: {
-        status,
+        point: {
+          increment: 5,
+        },
       },
     });
 
-    revalidatePath("/dashboard/p2tl/list");
+    // point validator +5
+    await prisma.user.update({
+      where: {
+        id: session.user.id,
+      },
+      data: {
+        point: {
+          increment: 5,
+        },
+      },
+    });
 
-  } catch (error) {
+  }
 
-    console.log(error);
+  revalidatePath("/dashboard/p2tl/list");
+
+} catch (error) {
+
+  console.log(error);
 
   }
 };
@@ -296,6 +384,18 @@ export const createENERGIReport = async (formData: FormData) => {
         userId: session.user.id,
       }
     });
+
+    // tambah point pelapor +1
+    await prisma.user.update({
+    where: {
+      id: session.user.id,
+    },
+    data: {
+      point: {
+        increment: 1,
+      },
+    },
+  });
 
   } catch (error) {
 
@@ -339,22 +439,87 @@ export const updateENERGIStatus = async (
 
   // cek role user
   // hanya ADMIN yang boleh update status
-  if (session.user.role !== "admin") {
-    throw new Error("Access denied");
+if (
+  session.user.role !== "ADMIN" &&
+  session.user.role !== "PELAKSANA"
+) {
+  throw new Error("Unauthorized")
+}
+  try {
+
+     const report = await prisma.energiReport.update({
+    where: {
+      id,
+    },
+    data: {
+      status,
+    },
+  });
+
+  // jika status VALID
+  if (status === "Valid") {
+
+    // point pelapor +5
+    await prisma.user.update({
+      where: {
+        id: report.userId,
+      },
+      data: {
+        point: {
+          increment: 5,
+        },
+      },
+    });
+
+    // point validator +5
+    await prisma.user.update({
+      where: {
+        id: session.user.id,
+      },
+      data: {
+        point: {
+          increment: 5,
+        },
+      },
+    });
+
+  }
+
+  revalidatePath("/dashboard/energi/list");
+
+} catch (error) {
+
+  console.log(error);
+  }
+};
+
+// ================= RESET USER POINT =================
+export const resetUserPoint = async (userId: string) => {
+
+  const session = await auth();
+
+  // cek login
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  // hanya ADMIN
+  if (session.user.role !== "ADMIN") {
+    throw new Error("Unauthorized");
   }
 
   try {
 
-    await prisma.energiReport.update({
+    await prisma.user.update({
       where: {
-        id,
+        id: userId,
       },
       data: {
-        status,
+        point: 0,
       },
     });
 
-    revalidatePath("/dashboard/energi/list");
+    revalidatePath("/user");
 
   } catch (error) {
 

@@ -3,15 +3,19 @@ import { deleteP2TLReport } from "@/lib/action";
 import { updateP2TLStatus } from "@/lib/action";
 import { auth } from "@/auth";
 import { P2TLReport,User } from "@prisma/client";
+import { redirect } from "next/navigation";
 
 
 const P2TLListPage = async () => {
 const session = await auth();
+if (session?.user?.role === "PELAKSANA") {
+    redirect("/dashboard/jtl/list");
+}
 
 const reports: (P2TLReport & { user: User })[]= await prisma.p2TLReport.findMany({
 
   where:
-    session?.user?.role === "admin"
+    session?.user?.role === "ADMIN"
       ? {}
       : {
           userId: session?.user?.id,
@@ -83,7 +87,7 @@ const reports: (P2TLReport & { user: User })[]= await prisma.p2TLReport.findMany
         )}
       </div>
      {/* UPDATE STATUS ADMIN */}
-{session?.user?.role === "admin" && (
+{session?.user?.role === "ADMIN" && (
   <div className="mt-4">
 
     <form

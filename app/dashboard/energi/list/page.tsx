@@ -3,15 +3,19 @@ import { deleteENERGIReport } from "@/lib/action";
 import { updateENERGIStatus } from "@/lib/action";
 import { auth } from "@/auth";
 import { EnergiReport,User } from "@prisma/client";
+import { redirect } from "next/navigation";
 
 
 const ENERGIListPage = async () => {
 const session = await auth();
+if (session?.user?.role === "PELAKSANA") {
+    redirect("/dashboard/jtl/list");
+}
 
 const reports: (EnergiReport & { user: User })[]= await prisma.energiReport.findMany({
 
   where:
-    session?.user?.role === "admin"
+    session?.user?.role === "ADMIN"
       ? {}
       : {
           userId: session?.user?.id,
@@ -83,7 +87,7 @@ const reports: (EnergiReport & { user: User })[]= await prisma.energiReport.find
         )}
       </div>
      {/* UPDATE STATUS ADMIN */}
-{session?.user?.role === "admin" && (
+{session?.user?.role === "ADMIN" && (
   <div className="mt-4">
 
     <form

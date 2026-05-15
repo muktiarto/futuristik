@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 export const getUsers = async () => {
     const session = await auth();
-    if(!session || !session.user || session.user.role != "admin") redirect("/dashboard");
+    if(!session || !session.user || session.user.role != "ADMIN") redirect("/dashboard");
 
     try {
         const users = await prisma.user.findMany();
@@ -19,10 +19,10 @@ export const getProductByUser = async () => {
     if(!session || !session.user) redirect("/dashboard");
     const role = session.user.role;
 
-    if(role === "admin"){
+    if(role === "ADMIN"){
     try {
         const products = await prisma.product.findMany({
-            include:{user:{select:{name:true}}},
+            include:{user:{select:{name:true,id:true}}},
         });
         return products;
     } catch (error) {
@@ -34,7 +34,7 @@ export const getProductByUser = async () => {
    try {
         const products = await prisma.product.findMany({
             where:{userId:session.user.id},
-            include:{user:{select:{name:true}}},
+            include:{user:{select:{name:true,id:true}}},
         });
         return products;
     } catch (error) {

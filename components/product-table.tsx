@@ -2,6 +2,7 @@ import { getProductByUser } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 
 
+
 const ProductTable = async () => {
     const products = await getProductByUser();
     if (!products?.length)return <h1 className="text-2xl">No Product Found</h1>
@@ -13,6 +14,7 @@ const ProductTable = async () => {
                 <th className='py-3 px-6 text-left text-sm'>Price</th>
                 <th className='py-3 px-6 text-left text-sm'>Created At</th>
                 <th className='py-3 px-6 text-left text-sm'>Created By</th>
+                <th className='py-3 px-6 text-left text-sm'>Action</th>
             </tr>
         </thead>
         <tbody>
